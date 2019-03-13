@@ -58,8 +58,14 @@ app.post('/login', (req, res) => {
       const db = client.db(env.mongo.dbName)
       user.authenticatePassword(username, password, db).then((result) => {
         res.send(JSON.stringify(result))
-      }).catch(() => {
-        res.status(500).end()
+      }).catch((error) => {
+        if (error.message === 'Wrong password' ||
+          error.message === 'User does not exist'
+        ) {
+          res.status(401).end()
+        } else {
+          res.status(500).end()
+        }
         client.close()
       })
     }
