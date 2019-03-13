@@ -28,6 +28,15 @@
         Closest approach during timeframe
       </div>
       <approach-data :value="value.closest_approach_data" />
+
+      <v-textarea
+        outline
+        v-show="showNote"
+        label="Observation note"
+        :value="observationNote"
+        :readonly="readonly"
+      />
+
     </v-card-text>
 
     <v-card-actions>
@@ -42,11 +51,34 @@
             </v-icon>
             <span class="subheading mr-2">nasa.gov</span>
           </a>
+
           <span class="mr-1">·</span>
-          <v-icon class="mr-1">
-            create
-          </v-icon>
-          <span class="subheading">Add observation note</span>
+
+          <span v-show="readonly && !showNote" @click="toggleNote">
+            <v-icon class="mr-1">
+              expand_more
+            </v-icon>
+            <span class="subheading">Show observation note</span>
+          </span>
+          <span v-show="readonly && showNote" @click="toggleNote">
+            <v-icon class="mr-1">
+              expand_less
+            </v-icon>
+            <span class="subheading">Hide observation note</span>
+          </span>
+          <span v-show="!readonly && !showNote" @click="toggleNote">
+            <v-icon class="mr-1">
+              create
+            </v-icon>
+            <span class="subheading">Add observation note</span>
+          </span>
+          <span v-show="!readonly && showNote" @click="saveNote">
+            <v-icon class="mr-1">
+              save
+            </v-icon>
+            <span class="subheading">Save observation note</span>
+          </span>
+
         </v-layout>
       </v-list-tile>
     </v-card-actions>
@@ -68,7 +100,17 @@ const component = {
     ApproachData
   },
   props: {
-    value: Object
+    value: Object,
+    readonly: {
+      type: Boolean,
+      default: false
+    }
+  },
+  data () {
+    return {
+      showNote: false,
+      observationNote: 'hello universe'
+    }
   },
   computed: {
     isHazardous () {
@@ -76,6 +118,15 @@ const component = {
     },
     isSentry () {
       return this.value.is_sentry_object
+    }
+  },
+  methods: {
+    toggleNote () {
+      this.showNote = !this.showNote;
+    },
+    saveNote () {
+      // api call to save note
+      this.toggleNote()
     }
   }
 }
