@@ -5,6 +5,66 @@
   >
     <v-toolbar app>
       <v-toolbar-title>Asteroids!</v-toolbar-title>
+      <v-spacer />
+      <v-text-field
+        v-show="!isLoggedIn"
+        v-model="username"
+        flat
+        solo-inverted
+        hide-details
+        prepend-inner-icon="person"
+        label="username"
+      />
+      <v-text-field
+        v-show="!isLoggedIn"
+        v-model="password"
+        flat
+        solo-inverted
+        hide-details
+        prepend-inner-icon="vpn_key"
+        label="password"
+        type="password"
+      />
+      <v-btn
+        v-show="!isLoggedIn"
+        :loading="loadingAuth"
+        color="info"
+        @click="login"
+      >
+        Login
+      </v-btn>
+      <v-btn
+        v-show="!isLoggedIn"
+        :loading="loadingAuth"
+        color="info"
+        @click="createAccount"
+      >
+        Create Account
+      </v-btn>
+
+      <span v-show="isLoggedIn">{{ username }}</span>
+      <v-btn
+        v-if="isLoggedIn"
+        color="info"
+        @click="logout"
+      >
+        Logout
+      </v-btn>
+
+      <v-snackbar
+        v-model="snackbar.show"
+        :timeout="2000"
+        top
+      >
+        {{ snackbar.text }}
+        <v-btn
+          color="pink"
+          flat
+          @click="snackbar.show = false"
+        >
+          Close
+        </v-btn>
+      </v-snackbar>
     </v-toolbar>
     <v-content>
       <v-container fluid>
@@ -21,7 +81,7 @@
             class="text-xs-center"
           >
             <v-btn
-              :loading="loading"
+              :loading="loadingNeo"
               @click="search"
             >
               Search
@@ -32,7 +92,7 @@
             mt-4
           >
             <near-earth-object-info
-              v-if="nearEarthObject && !loading"
+              v-if="nearEarthObject && !loadingNeo"
               :value="nearEarthObject"
             />
           </v-flex>
@@ -46,6 +106,7 @@
 import DateRangeInput from './components/DateRangeInput.vue'
 import NearEarthObjectInfo from './components/NearEarthObjectInfo.vue'
 import NasaApi from './mixins/NasaApi'
+import User from './mixins/User'
 
 const defaultStart = new Date()
 const maxDays = 7
@@ -54,7 +115,8 @@ const defaultEnd = new Date(defaultStart.getTime() + sevenDaysInMs)
 
 const component = {
   mixins: [
-    NasaApi
+    NasaApi,
+    User
   ],
   components: {
     DateRangeInput,
@@ -65,16 +127,68 @@ const component = {
       start: defaultStart.toISOString().substring(0, 10),
       end: defaultEnd.toISOString().substring(0, 10),
       max: maxDays,
-      loading: false,
-      nearEarthObject: null
+      loadingNeo: false,
+      loadingAuth: false,
+      nearEarthObject: null,
+      username: '',
+      password: '',
+      token: false,
+      snackbar: {
+        show: false,
+        text: 'Hello, Universe'
+      }
+    }
+  },
+  computed: {
+    isLoggedIn () {
+      return Boolean(this.token)
     }
   },
   methods: {
     search () {
-      this.loading = true
+      this.loadingNeo = true
       this.getNearestEarthObject(this.start, this.end).then((results) => {
         this.nearEarthObject = results
-        this.loading = false
+        this.loadingNeo = false
+      })
+    },
+    login () {
+      this.loadingAuth = true
+      this.loginUser(this.username, this.password).then((response) => {
+        if (response.status === 401) {
+          this.snackbar.text = 'Invalid username or password'
+          this.snackbar.show = true
+          this.loadingAuth = false
+        } else if (response.ok) {
+          response.json().then((data) => {
+            this.username = data.username
+            this.token = data.token
+            this.password = ''
+            this.loadingAuth = false
+          })
+        }
+      })
+    },
+    logout () {
+      this.username = ''
+      this.password = ''
+      this.token = false
+    },
+    createAccount () {
+      this.loadingAuth = true
+      this.createUser(this.username, this.password).then((response) => {
+        if (response.status === 409) {
+          this.snackbar.text = 'Account already exists'
+          this.snackbar.show = true
+          this.loadingAuth = false
+        } else if (response.ok) {
+          response.json().then((data) => {
+            this.username = data.username
+            this.token = data.token
+            this.password = ''
+            this.loadingAuth = false
+          })
+        }
       })
     }
   }
