@@ -24,6 +24,7 @@
     "css-loader": "^2.1.1",
     "express": "^4.16.4",
     "mongodb": "^3.1.13",
+    "node-uuid": "^1.4.8",
     "vue": "^2.6.8",
     "vue-loader": "^15.7.0",
     "vue-router": "^3.0.2",
