@@ -48,8 +48,8 @@ const component = {
   },
   methods: {
     setDate (newValue) {
-      this.showMenu = false;
-      this.$emit("input", newValue);
+      this.showMenu = false
+      this.$emit('input', newValue)
     }
   }
 }

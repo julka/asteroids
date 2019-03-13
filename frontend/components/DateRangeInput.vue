@@ -1,6 +1,12 @@
 <template>
- <v-container grid-list-md text-xs-center>
-    <v-layout row wrap>
+  <v-container
+    grid-list-md
+    text-xs-center
+  >
+    <v-layout
+      row
+      wrap
+    >
       <v-flex xs6>
         <date-menu-input
           :value="start"
@@ -55,21 +61,21 @@ const component = {
   methods: {
     rangeRule () {
       if (this.rangeWidth > this.maxDaysInSeconds) {
-        return `Dates must be within ${this.max} days of each other.`;
+        return `Dates must be within ${this.max} days of each other.`
       }
-      return true;
+      return true
     },
     startRule () {
       if (this.startDateObject > this.endDateObject) {
-        return 'Start date cannot be after end date';
+        return 'Start date cannot be after end date'
       }
-      return true;
+      return true
     },
     endRule () {
       if (this.startDateObject > this.endDateObject) {
-        return 'End date cannot be before start date';
+        return 'End date cannot be before start date'
       }
-      return true;
+      return true
     }
   }
 }
