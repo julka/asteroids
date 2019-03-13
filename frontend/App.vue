@@ -161,10 +161,7 @@ const component = {
           this.loadingAuth = false
         } else if (response.ok) {
           response.json().then((data) => {
-            this.username = data.username
-            this.token = data.token
-            this.password = ''
-            this.loadingAuth = false
+            this.setAuth(data.username, data.token)
           })
         }
       })
@@ -183,13 +180,17 @@ const component = {
           this.loadingAuth = false
         } else if (response.ok) {
           response.json().then((data) => {
-            this.username = data.username
-            this.token = data.token
-            this.password = ''
-            this.loadingAuth = false
+            this.setAuth(data.username, data.token)
           })
         }
       })
+    },
+    setAuth (username, token) {
+      this.username = username
+      this.token = token
+      this.password = ''
+      this.loadingAuth = false
+      this.getNotes()
     }
   }
 }
