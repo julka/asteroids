@@ -37,10 +37,7 @@ app.post('/user', (req, res) => {
           res.status(409).end()
         } else {
           return user.create(username, password, db).then((result) => {
-            res.send(JSON.stringify({
-              username,
-              success: true
-            }))
+            res.send(JSON.stringify(result))
           })
         }
       }).catch(() => {
@@ -49,6 +46,24 @@ app.post('/user', (req, res) => {
       })
     }
   })
+})
+
+app.post('/login', (req, res) => {
+  const { username, password } = req.body
+
+  client.connect((error) => {
+    if (error) {
+      res.status(500).end()
+    } else {
+      const db = client.db(env.mongo.dbName)
+      user.authenticatePassword(username, password, db).then((result) => {
+        res.send(JSON.stringify(result))
+      }).catch(() => {
+        res.status(500).end()
+        client.close()
+      })
+    }
+  });
 })
 
 app.listen(3001, () => console.log('Server ready'))
