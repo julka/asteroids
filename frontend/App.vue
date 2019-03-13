@@ -107,6 +107,7 @@ import DateRangeInput from './components/DateRangeInput.vue'
 import NearEarthObjectInfo from './components/NearEarthObjectInfo.vue'
 import NasaApi from './mixins/NasaApi'
 import User from './mixins/User'
+import Neo from './mixins/Neo'
 
 const defaultStart = new Date()
 const maxDays = 7
@@ -116,7 +117,8 @@ const defaultEnd = new Date(defaultStart.getTime() + sevenDaysInMs)
 const component = {
   mixins: [
     NasaApi,
-    User
+    User,
+    Neo
   ],
   components: {
     DateRangeInput,
