@@ -13,6 +13,7 @@
       <v-text-field
         :value="value"
         :label="label"
+        :rules="rules"
         prepend-icon="event"
         readonly
         v-on="on"
@@ -34,7 +35,11 @@
 const component = {
   props: {
     value: String,
-    label: String
+    label: String,
+    rules: {
+      type: Array,
+      default: []
+    }
   },
   data () {
     return {
