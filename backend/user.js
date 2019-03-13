@@ -24,7 +24,7 @@ user.create = function (username, password, db) {
         db
       ).then(() => {
         return user.authenticatePassword(username, password, db)
-      });
+      })
     })
   })
 }
@@ -114,7 +114,7 @@ function find (search, db) {
 }
 
 function findByUsernameUnsanitized (username, db) {
-  return find({ username }, db);
+  return find({ username }, db)
 }
 
 function sanitize (userDoc) {

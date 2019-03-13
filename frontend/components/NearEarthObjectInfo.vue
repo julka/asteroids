@@ -30,13 +30,12 @@
       <approach-data :value="value.closest_approach_data" />
 
       <v-textarea
-        outline
         v-show="showNote"
+        outline
         label="Observation note"
         :value="observationNote"
         :readonly="readonly"
       />
-
     </v-card-text>
 
     <v-card-actions>
@@ -54,31 +53,42 @@
 
           <span class="mr-1">·</span>
 
-          <span v-show="readonly && !showNote" @click="toggleNote">
+          <span
+            v-show="readonly && !showNote"
+            @click="toggleNote"
+          >
             <v-icon class="mr-1">
               expand_more
             </v-icon>
             <span class="subheading">Show observation note</span>
           </span>
-          <span v-show="readonly && showNote" @click="toggleNote">
+          <span
+            v-show="readonly && showNote"
+            @click="toggleNote"
+          >
             <v-icon class="mr-1">
               expand_less
             </v-icon>
             <span class="subheading">Hide observation note</span>
           </span>
-          <span v-show="!readonly && !showNote" @click="toggleNote">
+          <span
+            v-show="!readonly && !showNote"
+            @click="toggleNote"
+          >
             <v-icon class="mr-1">
               create
             </v-icon>
             <span class="subheading">Add observation note</span>
           </span>
-          <span v-show="!readonly && showNote" @click="saveNote">
+          <span
+            v-show="!readonly && showNote"
+            @click="saveNote"
+          >
             <v-icon class="mr-1">
               save
             </v-icon>
             <span class="subheading">Save observation note</span>
           </span>
-
         </v-layout>
       </v-list-tile>
     </v-card-actions>
@@ -122,7 +132,7 @@ const component = {
   },
   methods: {
     toggleNote () {
-      this.showNote = !this.showNote;
+      this.showNote = !this.showNote
     },
     saveNote () {
       // api call to save note

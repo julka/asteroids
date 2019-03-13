@@ -69,7 +69,7 @@ app.post('/login', (req, res) => {
         client.close()
       })
     }
-  });
+  })
 })
 
 app.listen(3001, () => console.log('Server ready'))
