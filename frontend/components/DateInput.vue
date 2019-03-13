@@ -38,7 +38,7 @@ const component = {
     label: String,
     rules: {
       type: Array,
-      default: []
+      default: () => []
     }
   },
   data () {
