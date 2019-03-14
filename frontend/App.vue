@@ -93,7 +93,9 @@
           >
             <near-earth-object-info
               v-if="nearEarthObject && !loadingNeo"
-              :value="nearEarthObject"
+              :neo="nearEarthObject"
+              :value="note"
+              @input="saveNote"
             />
           </v-flex>
         </v-layout>
@@ -131,6 +133,7 @@ const component = {
       max: maxDays,
       loadingNeo: false,
       loadingAuth: false,
+      savingNote: false,
       nearEarthObject: null,
       username: '',
       password: '',
@@ -145,14 +148,30 @@ const component = {
   computed: {
     isLoggedIn () {
       return Boolean(this.token)
+    },
+    neoId () {
+      return this.nearEarthObject && this.nearEarthObject.neo_reference_id
+    },
+    noteDoc () {
+      if (this.neoId) {
+        return this.notes.find((note) => {
+          return note.neoId === this.neoId
+        })
+      }
+    },
+    note () {
+      return this.noteDoc && this.noteDoc.note
+    },
+    update () {
+      return this.noteDoc ? this.updateNeoNoteForUser : this.addNeoNoteForUser
     }
   },
   methods: {
     getNotes () {
-      this.getAllForUser(this.username, this.token).then((response) => {
+      this.getAllNeoNotesForUser(this.username, this.token).then((response) => {
         if (response.ok) {
-          response.json().then((data) => {
-            this.notes = data
+          response.json().then((notes) => {
+            this.notes = notes
           })
         }
       })
@@ -203,6 +222,14 @@ const component = {
       this.password = ''
       this.loadingAuth = false
       this.getNotes()
+    },
+    saveNote (newNote) {
+      this.savingNote = true
+      this.update(this.neoId, newNote, this.username, this.token).then(() => {
+        return this.getNotes()
+      }).finally(() => {
+        this.savingNote = false
+      })
     }
   }
 }
