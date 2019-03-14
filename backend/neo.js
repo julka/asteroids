@@ -9,16 +9,23 @@ neo.findAllByUsername = function (username, db) {
 }
 
 neo.create = function (neoId, note, username, db) {
-  return neo.createDocument(
-    {
-      neoId,
-      note,
-      username,
-      created: Math.floor(Date.now() / 1000),
-      edited: Math.floor(Date.now() / 1000)
-    },
-    db
-  )
+  return new Promise((resolve, reject) => {
+    find({ neoId, username }, db).then((docs) => {
+      if (docs.length) {
+        reject(new Error('Entity exists'))
+      } else {
+        const neoDoc = {
+          neoId,
+          note,
+          username,
+          created: Math.floor(Date.now() / 1000),
+          edited: Math.floor(Date.now() / 1000)
+        }
+
+        resolve(neo.createDocument(neoDoc, db))
+      }
+    })
+  })
 }
 
 neo.update = function (neoId, note, username, db) {
@@ -28,11 +35,17 @@ neo.update = function (neoId, note, username, db) {
       note,
       edited: Math.floor(Date.now() / 1000)
     }
-    return neo.collection(db).insertOne(filter, update, (error, result) => {
-      if (error) {
-        reject(error)
+    find(filter, db).then((docs) => {
+      if (!docs.length) {
+        reject(new Error('Entity does not exist'))
       } else {
-        resolve(result)
+        neo.collection(db).insertOne(filter, update, (error, result) => {
+          if (error) {
+            reject(error)
+          } else {
+            resolve(result)
+          }
+        })
       }
     })
   })
