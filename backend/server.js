@@ -114,8 +114,6 @@ app.put('/neos/:neoId', (req, res) => {
   const username = req.headers['x-api-id']
   const token = req.headers['x-api-key']
 
-  console.log({ note, neoId, username, token})
-
   client.connect().then(() => {
     const db = client.db(env.mongo.dbName)
     return user.authenticateToken(username, token, db).then(() => {

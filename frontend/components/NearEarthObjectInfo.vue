@@ -31,9 +31,9 @@
 
       <v-textarea
         v-show="showNote"
+        v-model="localValue"
         outline
         label="Observation note"
-        v-model="localValue"
         :readonly="readonly"
       />
     </v-card-text>
@@ -78,8 +78,14 @@
             <v-icon class="mr-1">
               create
             </v-icon>
-            <span class="subheading" v-show="localValue">Edit observation note</span>
-            <span class="subheading" v-show="!localValue">Add observation note</span>
+            <span
+              v-show="localValue"
+              class="subheading"
+            >Edit observation note</span>
+            <span
+              v-show="!localValue"
+              class="subheading"
+            >Add observation note</span>
           </span>
           <span
             v-show="!readonly && showNote"
@@ -140,7 +146,7 @@ const component = {
       this.showNote = !this.showNote
     },
     saveNote () {
-      this.$emit("input", this.localValue)
+      this.$emit('input', this.localValue)
       this.toggleNote()
     }
   }

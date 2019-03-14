@@ -28,11 +28,11 @@ const mixin = {
             'X-API-Key': token,
             'X-API-ID': username
           },
-          body: JSON.stringify({note})
+          body: JSON.stringify({ note })
         }
       )
     },
-    updateNeoNoteForUser(neoId, note, username, token) {
+    updateNeoNoteForUser (neoId, note, username, token) {
       const url = `${apiUrl}/neos/${neoId}`
       return fetch(
         url,
@@ -43,7 +43,7 @@ const mixin = {
             'X-API-Key': token,
             'X-API-ID': username
           },
-          body: JSON.stringify({note})
+          body: JSON.stringify({ note })
         }
       )
     }
