@@ -1,6 +1,6 @@
 const mixin = {
   methods: {
-    getAllForUser (username, token) {
+    getAllNeoNotesForUser (username, token) {
       const url = 'http://localhost:3001/neos'
       return fetch(
         url,
