@@ -5,6 +5,7 @@ const MongoClient = require('mongodb').MongoClient
 
 const env = require('../env')
 const user = require('./user')
+const neo = require('./neo')
 const app = express()
 
 app.use(bodyParser.json())
@@ -76,6 +77,28 @@ app.post('/login', (req, res) => {
       const db = client.db(env.mongo.dbName)
       user.authenticatePassword(username, password, db).then((result) => {
         res.send(JSON.stringify(result))
+      }).catch((error) => {
+        handleError(error, res)
+        client.close()
+      })
+    }
+  })
+})
+
+app.get('/neos', (req, res) => {
+  const username = req.headers['x-api-id']
+  const token = req.headers['x-api-key']
+
+  console.log({ username, token, req })
+  client.connect((error) => {
+    if (error) {
+      handleError(error, res)
+    } else {
+      const db = client.db(env.mongo.dbName)
+      user.authenticateToken(username, token, db).then(() => {
+        return neo.findAllByUsername(username, db).then((result) => {
+          res.send(JSON.stringify(result))
+        })
       }).catch((error) => {
         handleError(error, res)
         client.close()
