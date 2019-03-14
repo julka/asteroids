@@ -1,8 +1,8 @@
-const apiKey = 'secret'
+import { nasaApiKey } from '../../env.js'
 
 function getNasaApiSearchParams () {
   const searchParams = new URLSearchParams()
-  searchParams.append('api_key', apiKey)
+  searchParams.append('api_key', nasaApiKey)
   return searchParams
 }
 

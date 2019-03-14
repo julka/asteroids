@@ -12,5 +12,6 @@ module.exports = {
   ui: {
     port: 8080,
     baseUrl: 'http://localhost'
-  }
+  },
+  nasaApiKey: 'secret'
 }
