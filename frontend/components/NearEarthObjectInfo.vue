@@ -5,7 +5,7 @@
     max-width="400"
   >
     <v-card-title>
-      <span class="display-2 font-weight-bold">{{ value.name }}</span>
+      <span class="display-2 font-weight-bold">{{ neo.name }}</span>
     </v-card-title>
 
     <v-card-text class="headline font-weight-light">
@@ -22,18 +22,18 @@
       </p>
 
       <p>
-        Estimated diameter in miles: {{ value.estimated_diameter.miles.estimated_diameter_min }} x {{ value.estimated_diameter.miles.estimated_diameter_max }}
+        Estimated diameter in miles: {{ neo.estimated_diameter.miles.estimated_diameter_min }} x {{ neo.estimated_diameter.miles.estimated_diameter_max }}
       </p>
       <div class="font-weight-bold">
         Closest approach during timeframe
       </div>
-      <approach-data :value="value.closest_approach_data" />
+      <approach-data :value="neo.closest_approach_data" />
 
       <v-textarea
         v-show="showNote"
         outline
         label="Observation note"
-        :value="observationNote"
+        v-model="localValue"
         :readonly="readonly"
       />
     </v-card-text>
@@ -44,7 +44,7 @@
           align-center
           justify-end
         >
-          <a :href="value.nasa_jpl_url">
+          <a :href="neo.nasa_jpl_url">
             <v-icon class="mr-1">
               link
             </v-icon>
@@ -78,7 +78,8 @@
             <v-icon class="mr-1">
               create
             </v-icon>
-            <span class="subheading">Add observation note</span>
+            <span class="subheading" v-show="localValue">Edit observation note</span>
+            <span class="subheading" v-show="!localValue">Add observation note</span>
           </span>
           <span
             v-show="!readonly && showNote"
@@ -110,32 +111,36 @@ const component = {
     ApproachData
   },
   props: {
-    value: Object,
+    neo: Object,
     readonly: {
       type: Boolean,
       default: false
-    }
+    },
+    value: String
   },
   data () {
     return {
       showNote: false,
-      observationNote: 'hello universe'
+      localValue: this.value
     }
   },
   computed: {
     isHazardous () {
-      return this.value.is_potentially_hazardous_asteroid
+      return this.neo.is_potentially_hazardous_asteroid
     },
     isSentry () {
-      return this.value.is_sentry_object
+      return this.neo.is_sentry_object
     }
   },
   methods: {
     toggleNote () {
+      if (!this.showNote) {
+        this.localValue = this.value
+      }
       this.showNote = !this.showNote
     },
     saveNote () {
-      // api call to save note
+      this.$emit("input", this.localValue)
       this.toggleNote()
     }
   }
