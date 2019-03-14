@@ -20,15 +20,18 @@ var corsOptions = {
 app.use(cors(corsOptions))
 
 const errorMessageToHttpStatusCode = {
+  default: 500,
   'Wrong password': 401,
   'User does not exist': 401,
-  'Bad authentication': 401
+  'Bad authentication': 401,
+  'Entity exists': 409,
+  'Entity does not exist': 404
 }
 
-function handleError(error, res) {
-  let httpStatusCode = 500;
+function handleError (error, res) {
+  let httpStatusCode = errorMessageToHttpStatusCode.default
   if (errorMessageToHttpStatusCode[error.message]) {
-    httpStatusCode = errorMessageToHttpStatusCode[error.message];
+    httpStatusCode = errorMessageToHttpStatusCode[error.message]
   }
   res.status(httpStatusCode).end()
 }
