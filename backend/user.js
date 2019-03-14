@@ -55,7 +55,7 @@ user.authenticateToken = function (username, token, db) {
         const userDoc = docs.pop()
         resolve(sanitize(userDoc))
       } else {
-        reject(new Error('User does not exist'))
+        reject(new Error('Bad authentication'))
       }
     })
   })
