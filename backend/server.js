@@ -19,6 +19,20 @@ var corsOptions = {
 
 app.use(cors(corsOptions))
 
+const errorMessageToHttpStatusCode = {
+  'Wrong password': 401,
+  'User does not exist': 401,
+  'Bad authentication': 401
+}
+
+function handleError(error, res) {
+  let httpStatusCode = 500;
+  if (errorMessageToHttpStatusCode[error.message]) {
+    httpStatusCode = errorMessageToHttpStatusCode[error.message];
+  }
+  res.status(httpStatusCode).end()
+}
+
 app.get('/', (req, res) => {
   res.send('Hello Universe!')
 })
@@ -28,20 +42,21 @@ app.post('/user', (req, res) => {
 
   client.connect((error) => {
     if (error) {
-      res.status(500).end()
+      handleError(error, res)
     } else {
       const db = client.db(env.mongo.dbName)
       user.findByUsername(username, db).then((docs) => {
         if (docs.length) {
           // if the username exists send a 409 CONFLICT
           res.status(409).end()
+          client.close()
         } else {
           return user.create(username, password, db).then((result) => {
             res.send(JSON.stringify(result))
           })
         }
-      }).catch(() => {
-        res.status(500).end()
+      }).catch((error) => {
+        handleError(error, res)
         client.close()
       })
     }
@@ -53,19 +68,13 @@ app.post('/login', (req, res) => {
 
   client.connect((error) => {
     if (error) {
-      res.status(500).end()
+      handleError(error, res)
     } else {
       const db = client.db(env.mongo.dbName)
       user.authenticatePassword(username, password, db).then((result) => {
         res.send(JSON.stringify(result))
       }).catch((error) => {
-        if (error.message === 'Wrong password' ||
-          error.message === 'User does not exist'
-        ) {
-          res.status(401).end()
-        } else {
-          res.status(500).end()
-        }
+        handleError(error, res)
         client.close()
       })
     }
