@@ -16,10 +16,11 @@ neo.findAllByUsername = function (username, db) {
   })
 }
 
-neo.create = function (neoId, note, username, db) {
-  return neo.collection(db).findOne({ neoId, username }).then((result) => {
+neo.create = async (neoId, note, username, db) => {
+  try {
+    const result = await neo.collection(db).findOne({ neoId, username })
     if (result) {
-      return Promise.reject(new Error('Entity exists'))
+      throw new Error('Entity exists')
     } else {
       const neoDoc = {
         neoId,
@@ -31,24 +32,27 @@ neo.create = function (neoId, note, username, db) {
 
       return neo.createDocument(neoDoc, db)
     }
-  })
+  } catch (error) {
+    throw error
+  }
 }
 
-neo.update = function (neoId, note, username, db) {
-  console.log({neoId, note, username, db})
-  const filter = { neoId, username }
-  const update = {
-    note,
-    edited: Math.floor(Date.now() / 1000)
-  }
-  return neo.collection(db).findOne(filter).then((result) => {
-    console.log({result})
+neo.update = async (neoId, note, username, db) => {
+  try {
+    const filter = { neoId, username }
+    const update = {
+      note,
+      edited: Math.floor(Date.now() / 1000)
+    }
+    const result = await neo.collection(db).findOne(filter)
     if (!result) {
-      return Promise.reject(new Error('Entity does not exist'))
+      throw new Error('Entity does not exist')
     } else {
       return neo.collection(db).updateOne(filter, { $set: update })
     }
-  })
+  } catch (error) {
+    throw error
+  }
 }
 
 neo.createDocument = function (neoDoc, db) {
