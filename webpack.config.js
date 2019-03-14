@@ -1,6 +1,7 @@
 const webpack = require('webpack')
 const { VueLoaderPlugin } = require('vue-loader')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const env = require('./env.js')
 
 module.exports = {
   mode: 'development',
@@ -11,7 +12,8 @@ module.exports = {
     hot: true,
     watchOptions: {
       poll: true
-    }
+    },
+    port: env.ui.port
   },
   module: {
     rules: [

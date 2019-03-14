@@ -1,7 +1,10 @@
+import { api } from '../../env.js'
+const apiUrl = `${api.baseUrl}:${api.port}`
+
 const mixin = {
   methods: {
     createUser (username, password) {
-      const url = 'http://localhost:3001/user'
+      const url = `${apiUrl}/user`
       return fetch(
         url,
         {
@@ -12,7 +15,7 @@ const mixin = {
       )
     },
     loginUser (username, password) {
-      const url = 'http://localhost:3001/login'
+      const url = `${apiUrl}/login`
       return fetch(
         url,
         {

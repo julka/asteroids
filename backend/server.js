@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true }))
 const client = new MongoClient(env.mongo.url)
 
 var corsOptions = {
-  origin: env.api.baseUrl,
+  origin: `${env.ui.baseUrl}:${env.ui.port}`,
   optionsSuccessStatus: 200
 }
 
@@ -128,4 +128,4 @@ app.put('/neos/:neoId', (req, res) => {
   }).finally(client.close)
 })
 
-app.listen(3001, () => console.log('Server ready'))
+app.listen(env.api.port, () => console.log('Server ready'))

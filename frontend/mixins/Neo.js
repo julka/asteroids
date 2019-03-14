@@ -1,7 +1,10 @@
+import { api } from '../../env.js'
+const apiUrl = `${api.baseUrl}:${api.port}`
+
 const mixin = {
   methods: {
     getAllNeoNotesForUser (username, token) {
-      const url = 'http://localhost:3001/neos'
+      const url = `${apiUrl}/neos`
       return fetch(
         url,
         {
@@ -15,7 +18,7 @@ const mixin = {
       )
     },
     addNeoNoteForUser (neoId, note, username, token) {
-      const url = `http://localhost:3001/neos/${neoId}`
+      const url = `${apiUrl}/neos/${neoId}`
       return fetch(
         url,
         {
@@ -30,7 +33,7 @@ const mixin = {
       )
     },
     updateNeoNoteForUser(neoId, note, username, token) {
-      const url = `http://localhost:3001/neos/${neoId}`
+      const url = `${apiUrl}/neos/${neoId}`
       return fetch(
         url,
         {
