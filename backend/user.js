@@ -121,7 +121,7 @@ function sanitize (userDoc) {
   return {
     username: userDoc.username,
     created: userDoc.created,
-    token: userDoc.created
+    token: userDoc.token
   }
 }
 
