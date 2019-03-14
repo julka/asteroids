@@ -90,4 +90,42 @@ app.get('/neos', (req, res) => {
   }).finally(client.close)
 })
 
+app.post('/neos/:neoId', (req, res) => {
+  const { note } = req.body
+  const { neoId } = req.params
+  const username = req.headers['x-api-id']
+  const token = req.headers['x-api-key']
+
+  client.connect().then(() => {
+    const db = client.db(env.mongo.dbName)
+    return user.authenticateToken(username, token, db).then(() => {
+      return neo.create(neoId, note, username, db).then((result) => {
+        res.send(JSON.stringify(result))
+      })
+    })
+  }).catch((error) => {
+    handleError(error, res)
+  }).finally(client.close)
+})
+
+app.put('/neos/:neoId', (req, res) => {
+  const { note } = req.body
+  const { neoId } = req.params
+  const username = req.headers['x-api-id']
+  const token = req.headers['x-api-key']
+
+  console.log({ note, neoId, username, token})
+
+  client.connect().then(() => {
+    const db = client.db(env.mongo.dbName)
+    return user.authenticateToken(username, token, db).then(() => {
+      return neo.update(neoId, note, username, db).then((result) => {
+        res.send(JSON.stringify(result))
+      })
+    })
+  }).catch((error) => {
+    handleError(error, res)
+  }).finally(client.close)
+})
+
 app.listen(3001, () => console.log('Server ready'))
