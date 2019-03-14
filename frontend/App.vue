@@ -135,6 +135,7 @@ const component = {
       username: '',
       password: '',
       token: false,
+      notes: [],
       snackbar: {
         show: false,
         text: 'Hello, Universe'
@@ -147,6 +148,15 @@ const component = {
     }
   },
   methods: {
+    getNotes () {
+      this.getAllForUser(this.username, this.token).then((response) => {
+        if (response.ok) {
+          response.json().then((data) => {
+            this.notes = data
+          })
+        }
+      })
+    },
     search () {
       this.loadingNeo = true
       this.getNearestEarthObject(this.start, this.end).then((results) => {
