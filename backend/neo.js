@@ -1,5 +1,3 @@
-const env = require('../env')
-
 const neo = {}
 
 neo.findByNeoId = function (neoId, db) {
