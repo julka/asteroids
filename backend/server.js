@@ -44,67 +44,50 @@ app.get('/', (req, res) => {
 app.post('/user', (req, res) => {
   const { username, password } = req.body
 
-  client.connect((error) => {
-    if (error) {
-      handleError(error, res)
-    } else {
-      const db = client.db(env.mongo.dbName)
-      user.findByUsername(username, db).then((docs) => {
-        if (docs.length) {
-          // if the username exists send a 409 CONFLICT
-          res.status(409).end()
-          client.close()
-        } else {
-          return user.create(username, password, db).then((result) => {
-            res.send(JSON.stringify(result))
-          })
-        }
-      }).catch((error) => {
-        handleError(error, res)
-        client.close()
-      })
-    }
-  })
+  client.connect().then(() => {
+    const db = client.db(env.mongo.dbName)
+    return user.findByUsername(username, db).then((userDoc) => {
+      if (userDoc) {
+        // if the username exists send a 409 CONFLICT
+        res.status(409).end()
+      } else {
+        return user.create(username, password, db).then((result) => {
+          res.send(JSON.stringify(result))
+        })
+      }
+    })
+  }).catch((error) => {
+    handleError(error, res)
+  }).finally(client.close)
 })
 
 app.post('/login', (req, res) => {
   const { username, password } = req.body
 
-  client.connect((error) => {
-    if (error) {
-      handleError(error, res)
-    } else {
-      const db = client.db(env.mongo.dbName)
-      user.authenticatePassword(username, password, db).then((result) => {
-        res.send(JSON.stringify(result))
-      }).catch((error) => {
-        handleError(error, res)
-        client.close()
-      })
-    }
-  })
+  client.connect().then(() => {
+    const db = client.db(env.mongo.dbName)
+    return user.authenticatePassword(username, password, db).then((userDoc) => {
+      res.send(JSON.stringify(userDoc))
+    })
+  }).catch((error) => {
+    handleError(error, res)
+  }).finally(client.close)
 })
 
 app.get('/neos', (req, res) => {
   const username = req.headers['x-api-id']
   const token = req.headers['x-api-key']
 
-  console.log({ username, token, req })
-  client.connect((error) => {
-    if (error) {
-      handleError(error, res)
-    } else {
-      const db = client.db(env.mongo.dbName)
-      user.authenticateToken(username, token, db).then(() => {
-        return neo.findAllByUsername(username, db).then((result) => {
-          res.send(JSON.stringify(result))
-        })
-      }).catch((error) => {
-        handleError(error, res)
-        client.close()
+  client.connect().then(() => {
+    const db = client.db(env.mongo.dbName)
+    return user.authenticateToken(username, token, db).then(() => {
+      return neo.findAllByUsername(username, db).then((result) => {
+        res.send(JSON.stringify(result))
       })
-    }
-  })
+    })
+  }).catch((error) => {
+    handleError(error, res)
+  }).finally(client.close)
 })
 
 app.listen(3001, () => console.log('Server ready'))
